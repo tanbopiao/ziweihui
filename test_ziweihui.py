@@ -1,4 +1,4 @@
-"""紫微讳（ZIWEIHUI）算子骨架单测：名帖完整、桩位齐整、只增不覆盖。"""
+"""紫微讳（ZIWEIHUI）算子单测：名帖完整、行为达标、只增不覆盖。"""
 import unittest
 
 from ziweihui import Ziweihui
@@ -15,13 +15,13 @@ class TestZiweihui(unittest.TestCase):
         self.assertTrue(d["anchor"].startswith("Ω₀⊂⊙∞⊂Ω"))
         self.assertTrue(d["mingwen"])
 
-    def test_grant_stub(self):
-        with self.assertRaises(NotImplementedError):
-            self.op.grant()
-
-    def test_use_stub(self):
-        with self.assertRaises(NotImplementedError):
-            self.op.use(None)
+    def test_grant_use_once(self):
+        token = self.op.grant()
+        self.assertTrue(self.op.use(token)["granted"])
+        with self.assertRaises(PermissionError):
+            self.op.use(token)
+        with self.assertRaises(PermissionError):
+            self.op.use("伪讳")
 
 
 if __name__ == "__main__":
