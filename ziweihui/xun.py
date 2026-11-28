@@ -4,6 +4,8 @@
 台账只记讳的哈希指纹，讳值本身永不落明文。
 """
 
+import copy
+
 
 class Xun:
     """巡衡官：全量审计台账（只记指纹，不记明文）。"""
@@ -23,14 +25,14 @@ class Xun:
             "actor": actor,
             "ts": time.strftime("%Y-%m-%dT%H:%M:%S+08:00", time.localtime()),
         }
-        self._ledger.append(entry)
-        return entry
+        self._ledger.append(copy.deepcopy(entry))
+        return copy.deepcopy(entry)
 
     def ledger(self, action=None):
         """查台账：可按动作过滤；每笔含指纹与时间，无明文讳值。"""
         if action is None:
-            return list(self._ledger)
-        return [e for e in self._ledger if e["action"] == action]
+            return copy.deepcopy(self._ledger)
+        return copy.deepcopy([e for e in self._ledger if e["action"] == action])
 
     def summary(self):
         """对账摘要：赐、销、拒各多少笔。"""

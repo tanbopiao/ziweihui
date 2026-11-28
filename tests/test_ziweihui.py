@@ -68,6 +68,30 @@ class TestXun(unittest.TestCase):
         self.assertEqual(xun.summary(), {"grant": 1, "verify_pass": 1, "verify_reject": 1})
 
 
+class TestTamperEvidence(unittest.TestCase):
+    """篡改现形：审计台账只增不覆盖，任何对副本的篡改都必须现形。"""
+
+    def test_ledger_resists_external_tamper(self):
+        xun = Xun()
+        e1 = xun.record("grant", "f1", actor="帝座")
+        e1["action"] = "fake"             # 试图篡改已入册的记录
+        e1["fingerprint"] = "伪造"
+        self.assertEqual(xun.ledger()[0]["action"], "grant")
+        self.assertEqual(xun.ledger()[0]["fingerprint"], "f1")
+
+    def test_replay_copy_tamper_visible(self):
+        xun = Xun()
+        xun.record("grant", "f1")
+        out = xun.ledger()
+        out[0]["action"] = "篡改"
+        self.assertEqual(xun.ledger()[0]["action"], "grant")
+
+    def test_forged_token_visible(self):
+        yan = Yan()
+        r = yan.verify("伪造之讳")
+        self.assertFalse(r["granted"])    # 伪造临文即现形
+
+
 class TestFacade(unittest.TestCase):
     def setUp(self):
         self.op = Ziweihui()
@@ -101,6 +125,7 @@ class TestFacade(unittest.TestCase):
         self.assertIn(fp(t), str(self.op.audit()))
 
     def test_legacy_describe_unchanged(self):
+        """回归：骨架 v1 名帖字段与取值不变（回归用例）。"""
         d = self.op.describe()
         self.assertEqual(d["repo"], "ziweihui")
         self.assertEqual(d["code"], "ZIWEIHUI")
@@ -108,6 +133,7 @@ class TestFacade(unittest.TestCase):
         self.assertTrue(d["anchor"].startswith("Ω₀⊂⊙∞⊂Ω"))
 
     def test_legacy_grant_use_unchanged(self):
+        """回归：骨架 v1 grant/use 一讳一用行为不变（回归用例）。"""
         t = self.op.grant()
         self.assertTrue(self.op.use(t)["granted"])
         with self.assertRaises(PermissionError):
