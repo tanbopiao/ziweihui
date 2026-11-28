@@ -1,0 +1,23 @@
+# operator.dsl —— ops.memory.search（七步流水线第 2 步：契约，不含实现）
+meta:
+  name: ops.memory.search
+  version: 0.1.0
+  sigil:
+    signer: yuanshu-kernel
+    fingerprint: sha256:PLACEHOLDER-UNTIL-REGISTER
+  body:
+    entry: search.py:run
+    runtime: python3.11
+    mode: template
+  deps:
+    inputs:
+      - name: query
+        type: string
+      - name: corpus
+        type: dict[string, string]
+    requires:
+      - hub.ledger.read
+  bounds:
+    side_effects: []
+    rollback: none_readonly
+    gates: [hard, soft]

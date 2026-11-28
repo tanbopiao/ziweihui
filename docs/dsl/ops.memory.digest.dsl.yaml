@@ -1,0 +1,21 @@
+# operator.dsl —— ops.memory.digest（七步流水线第 2 步：契约，不含实现）
+meta:
+  name: ops.memory.digest
+  version: 0.1.0
+  sigil:                           # 符头：签名与指纹（密钥本体不入档）
+    signer: yuanshu-kernel
+    fingerprint: sha256:PLACEHOLDER-UNTIL-REGISTER
+  body:                            # 符身：逻辑体引用
+    entry: digest.py:run
+    runtime: python3.11
+    mode: template                 # 模板模式：未接真 LLM，占位实现
+  deps:                            # 符胆：依赖与参数契约
+    inputs:
+      - name: session_id
+        type: string
+    requires:
+      - hub.ledger.read
+  bounds:                          # 符脚：副作用边界与回滚
+    side_effects: [hub.archive.append]
+    rollback: restore_last_archive
+    gates: [hard, soft]

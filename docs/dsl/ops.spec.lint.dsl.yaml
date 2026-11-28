@@ -1,0 +1,20 @@
+# operator.dsl —— ops.spec.lint（七步流水线第 2 步：契约，不含实现）
+meta:
+  name: ops.spec.lint
+  version: 0.1.0
+  sigil:
+    signer: yuanshu-kernel
+    fingerprint: sha256:PLACEHOLDER-UNTIL-REGISTER
+  body:
+    entry: lint.py:run
+    runtime: python3.11
+    mode: template
+  deps:
+    inputs:
+      - name: spec_text
+        type: string
+    requires: []
+  bounds:
+    side_effects: []
+    rollback: none_readonly
+    gates: [hard, soft]

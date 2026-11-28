@@ -1,0 +1,21 @@
+# operator.dsl —— ops.ledger.snapshot（七步流水线第 2 步：契约，不含实现）
+meta:
+  name: ops.ledger.snapshot
+  version: 0.1.0
+  sigil:
+    signer: yuanshu-kernel
+    fingerprint: sha256:PLACEHOLDER-UNTIL-REGISTER
+  body:
+    entry: snapshot.py:run
+    runtime: python3.11
+    mode: template
+  deps:
+    inputs:
+      - name: entries
+        type: list[dict]
+    requires:
+      - hub.ledger.read
+  bounds:
+    side_effects: []
+    rollback: none_readonly
+    gates: [hard, soft]
